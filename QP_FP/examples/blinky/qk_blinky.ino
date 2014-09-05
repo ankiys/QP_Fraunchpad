@@ -54,23 +54,14 @@ void ISRTimer_B (void)
 {
     QK_ISR_ENTRY();
     QF::TICK((void *)0); // process all armed time events
-  //PJOUT ^= BIT0;
-  //TB0CCR0 += F_CPU/8L/(2L * 2);                         // Add Offset to TACCR0
-  //TB0CCR0 += (SMCLK + BSP_TICKS_PER_SEC/2) / BSP_TICKS_PER_SEC;
-  //TB0CCR0 += 50000;
-    //TB0CCR0 += F_TIMER/(2L * 1);;
-    //TB0CCR0 = 1+ ((F_TIMER + BSP_TICKS_PER_SEC/2)/BSP_TICKS_PER_SEC);
     QK_ISR_EXIT();
 }
 //............................................................................
 void QF::onStartup(void) {
-    // set Timer2 in CTC mode, 1/1024 prescaler, start the timer ticking
-  TB0CCTL0 = CCIE;                          // TACCR0 interrupt enabled
-  //TB0CCR0 = 50000;
-  //TB0CCR0 = TB0R + SMCLK/8L/(2L * 1);
-  //TB0CCR0 = TB0R + F_TIMER/(2L * 1);
+
+  TB0CCTL0 = CCIE;                          // TBCCR0 interrupt enabled
   TB0CCR0 = ((F_TIMER + BSP_TICKS_PER_SEC/2)/BSP_TICKS_PER_SEC)+1;
-  TB0CTL = TBSSEL_2 + MC_1 + ID_3;                 // SMCLK, continuous up mode
+  TB0CTL = TBSSEL_2 + MC_1 + ID_3;          // SMCLK, continuous up mode
 }
 //............................................................................
 void QF::onCleanup(void) {
@@ -78,6 +69,7 @@ void QF::onCleanup(void) {
 //............................................................................
 void QF::onIdle() {
     QF_INT_ENABLE(); // re-enable interrupts
+                     //TODO: Sleep functions
 }
 //............................................................................
 void Q_onAssert(char const Q_ROM * const Q_ROM_VAR file, int line) {
